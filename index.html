@@ -22,6 +22,8 @@
     --glow:#FF9F45; --glow-2:#FF8A1F; --glow-dim:rgba(255,159,69,.14);
     /* time-as-temperature */
     --over:#F2685F; --today:#F5A33C; --soon:#E6C95C; --upcoming:#52BBA6; --later:#7E96B8;
+    /* energy (deliberately cool→hot, distinct from the warm urgency scale) */
+    --en-low:#5AA9E6; --en-med:#9B7EDE; --en-high:#D96BC4;
     --radius:16px; --radius-sm:10px;
     --shadow:0 12px 30px -12px rgba(0,0,0,.55);
     --wrap:480px;
@@ -93,6 +95,9 @@
     color:var(--muted);background:var(--ink-2);border:1px solid var(--line-soft);padding:7px 11px;border-radius:20px;transition:.15s}
   .chip-btn:hover{border-color:var(--line);color:var(--text)}
   .chip-btn.on{background:var(--glow-dim);border-color:var(--glow);color:var(--glow)}
+  .chip-btn[data-e="low"].on{background:rgba(90,169,230,.14);border-color:var(--en-low);color:var(--en-low)}
+  .chip-btn[data-e="med"].on{background:rgba(155,126,222,.15);border-color:var(--en-med);color:var(--en-med)}
+  .chip-btn[data-e="high"].on{background:rgba(217,107,196,.15);border-color:var(--en-high);color:var(--en-high)}
 
   /* ---------- Cards ---------- */
   .stack{display:flex;flex-direction:column;gap:11px}
@@ -119,11 +124,12 @@
   .datechip{font-family:var(--font-m);font-size:11px;font-weight:700;padding:4px 9px;border-radius:7px;
     letter-spacing:.01em;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
   .datechip .dot{width:6px;height:6px;border-radius:50%;background:currentColor}
-  .energy{display:inline-flex;gap:2.5px;align-items:center;padding:3px 4px}
-  .energy i{width:5px;height:5px;border-radius:50%;background:var(--faint);display:block}
-  .energy[data-e="low"] i:nth-child(-n+1),
-  .energy[data-e="med"] i:nth-child(-n+2),
-  .energy[data-e="high"] i:nth-child(-n+3){background:var(--glow)}
+  .enpill{font-family:var(--font-m);font-size:10.5px;font-weight:700;padding:4px 9px;border-radius:7px;
+    display:inline-flex;align-items:center;gap:5px;letter-spacing:.02em}
+  .enpill .dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+  .enpill[data-e="low"]{color:var(--en-low);background:rgba(90,169,230,.14)}
+  .enpill[data-e="med"]{color:var(--en-med);background:rgba(155,126,222,.15)}
+  .enpill[data-e="high"]{color:var(--en-high);background:rgba(217,107,196,.15)}
   .ifthen{font-size:12.5px;color:var(--muted);margin-top:10px;display:flex;gap:7px;line-height:1.4}
   .ifthen .k{font-family:var(--font-m);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;
     color:var(--faint);flex-shrink:0;padding-top:2px}
@@ -197,6 +203,12 @@
   .seg button .e-ico i{width:5px;height:5px;border-radius:50%;background:var(--faint)}
   .seg button.on{border-color:var(--glow);color:var(--text);background:var(--glow-dim)}
   .seg button.on .e-ico i{background:var(--glow)}
+  .seg button[data-e="low"].on{border-color:var(--en-low);background:rgba(90,169,230,.14)}
+  .seg button[data-e="low"].on .e-ico i{background:var(--en-low)}
+  .seg button[data-e="med"].on{border-color:var(--en-med);background:rgba(155,126,222,.15)}
+  .seg button[data-e="med"].on .e-ico i{background:var(--en-med)}
+  .seg button[data-e="high"].on{border-color:var(--en-high);background:rgba(217,107,196,.15)}
+  .seg button[data-e="high"].on .e-ico i{background:var(--en-high)}
   .sub-list{display:flex;flex-direction:column;gap:7px;margin-bottom:9px}
   .sub-item{display:flex;align-items:center;gap:9px;background:var(--surface);border-radius:9px;padding:9px 10px}
   .sub-check{width:19px;height:19px;border-radius:5px;border:2px solid var(--line);flex-shrink:0;display:grid;place-items:center;transition:.14s}
@@ -323,7 +335,6 @@
     <div class="brand">
       <div>
         <h1>Tempo<span class="tick">.</span></h1>
-        <div class="tagline">Catch the thought. Take the next small step.</div>
       </div>
     </div>
     <div class="hdr-right">
@@ -517,6 +528,7 @@ const $ = (s,r=document)=>r.querySelector(s);
 const $$ = (s,r=document)=>Array.from(r.querySelectorAll(s));
 const uid = ()=> (Date.now().toString(36)+Math.random().toString(36).slice(2,7));
 const esc = (s)=> (s||"").replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const ENLABEL = {low:"Low", med:"Med", high:"High"};
 
 function save(){
   pendingSave = true;
@@ -603,7 +615,7 @@ function cardHTML(t){
   const hasStep = t.step && t.step.trim();
   const subs = t.subtasks||[];
   const doneN = subs.filter(s=>s.done).length;
-  const energy = t.energy ? `<span class="energy" data-e="${t.energy}" title="${t.energy} energy" aria-label="${t.energy} energy"><i></i><i></i><i></i></span>` : "";
+  const energy = t.energy ? `<span class="enpill" data-e="${t.energy}" aria-label="${t.energy} energy"><span class="dot"></span>${ENLABEL[t.energy]}</span>` : "";
   const datechip = t.due
     ? `<span class="datechip" data-tier="${di.tier}" style="color:${di.color}"><span class="dot"></span>${esc(di.label)}</span>`
     : "";
