@@ -323,6 +323,59 @@
   .notif-note{font-size:12px;color:var(--faint);line-height:1.5;margin-top:16px;padding-top:15px;border-top:1px solid var(--line-soft)}
   .notif-note b{color:var(--muted);font-weight:600}
 
+  /* ---------- Recurrence / project / tags / actions ---------- */
+  .recpill{font-family:var(--font-m);font-size:10px;font-weight:700;letter-spacing:.02em;color:#86A6C8;
+    background:rgba(134,166,200,.13);padding:4px 8px;border-radius:7px;display:inline-flex;align-items:center;gap:5px}
+  .projpill{font-family:var(--font-m);font-size:10px;font-weight:700;letter-spacing:.02em;color:var(--muted);
+    background:var(--ink-2);border:1px solid var(--line-soft);padding:4px 8px;border-radius:7px;display:inline-flex;align-items:center;gap:5px;transition:.14s;cursor:pointer}
+  .projpill:hover{color:var(--text);border-color:var(--line)}
+  .tagchip{font-family:var(--font-m);font-size:10.5px;color:var(--muted);background:var(--ink-2);
+    border:1px solid var(--line-soft);padding:4px 8px;border-radius:7px;display:inline-flex;align-items:center;gap:4px;transition:.14s;cursor:pointer}
+  .tagchip:hover{color:var(--text);border-color:var(--line)}
+  .tagchip.on{color:var(--glow);background:var(--glow-dim);border-color:transparent;cursor:default}
+  .tagchip .tx{opacity:.7;font-size:11px;padding-left:2px;cursor:pointer}
+  .tagchip .tx:hover{opacity:1}
+  .card-actions{display:flex;gap:6px;justify-content:flex-end;margin-top:12px}
+  .pick-btn{width:100%;font-family:var(--font-d);font-weight:700;font-size:14.5px;color:#1A1206;letter-spacing:-.01em;
+    background:linear-gradient(180deg,var(--glow),var(--glow-2));border-radius:13px;padding:13px;margin-bottom:14px;transition:.15s}
+  .pick-btn:hover{filter:brightness(1.06)} .pick-btn:active{transform:scale(.98)}
+  /* editor quick-schedule + tag input */
+  .quick-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
+  .quick-row button{font-family:var(--font-m);font-size:10.5px;letter-spacing:.04em;color:var(--muted);
+    background:var(--surface);border:1px solid var(--line-soft);padding:7px 11px;border-radius:8px;transition:.14s}
+  .quick-row button:hover{border-color:var(--glow);color:var(--glow)}
+  .quick-row button.clear{margin-left:auto;color:var(--faint)}
+  .quick-row button.clear:hover{color:var(--over);border-color:var(--over)}
+  .seg.seg-wrap{flex-wrap:wrap}
+  .seg.seg-wrap button{flex:1 1 28%;padding:10px 4px;font-size:12.5px}
+  .tag-edit{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:9px}
+  /* pick-one overlay extras */
+  .pick-meta{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:30px;min-height:10px}
+  .pick-actions{display:flex;flex-direction:column;gap:12px;align-items:center;width:100%;max-width:320px}
+  .pick-actions .fc-main,.pick-actions .focus-done{width:100%}
+  .pick-sub{display:flex;gap:6px;margin-top:22px;flex-wrap:wrap;justify-content:center}
+  .pick-sub button{font-family:var(--font-m);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);
+    background:var(--surface);border:1px solid var(--line);padding:10px 16px;border-radius:11px;transition:.14s}
+  .pick-sub button:hover{color:var(--text)}
+  /* defer sheet */
+  .defer-row{display:flex;gap:8px;margin-bottom:18px}
+  .defer-row button{flex:1;font-family:var(--font-b);font-size:13px;font-weight:600;color:var(--text);
+    background:var(--surface);border:1px solid var(--line);padding:13px 6px;border-radius:11px;transition:.14s}
+  .defer-row button:hover{border-color:var(--glow);color:var(--glow);background:var(--glow-dim)}
+  /* calendar month/week toggle + week view */
+  .cal-modes{display:flex;gap:5px;background:var(--ink-2);border:1px solid var(--line-soft);border-radius:11px;padding:4px;margin:0 2px 16px}
+  .cal-mode{flex:1;font-family:var(--font-m);font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);padding:9px 0;border-radius:8px;transition:.14s}
+  .cal-mode.on{background:var(--surface-2);color:var(--text)}
+  .week-list{display:flex;flex-direction:column;gap:14px}
+  .week-day{border-left:2px solid var(--line-soft);padding-left:13px}
+  .week-day.today{border-left-color:var(--glow)}
+  .week-day.past{opacity:.72}
+  .week-day-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .wd-name{font-family:var(--font-d);font-weight:700;font-size:14.5px;letter-spacing:-.01em}
+  .week-day.today .wd-name{color:var(--glow)}
+  .cal-add.sm{padding:5px 9px;font-size:9.5px}
+  .week-empty{font-size:12.5px;color:var(--faint);padding:6px 0 2px}
+
   @media (prefers-reduced-motion: reduce){
     *{animation-duration:.001s !important;transition-duration:.05s !important}
     .tick{animation:none}
@@ -418,6 +471,23 @@
     <div class="field">
       <label for="fDue">Due date <span style="text-transform:none;letter-spacing:0;color:var(--faint)">· optional</span></label>
       <input class="inp" id="fDue" type="date" />
+      <div class="quick-row" id="fQuick">
+        <button data-quick="today">Today</button>
+        <button data-quick="tomorrow">Tomorrow</button>
+        <button data-quick="weekend">Weekend</button>
+        <button data-quick="nextweek">Next week</button>
+        <button data-quick="clear" class="clear">Clear</button>
+      </div>
+    </div>
+    <div class="field">
+      <label>Repeat</label>
+      <div class="seg seg-wrap" id="fRecur">
+        <button data-r="">Never</button>
+        <button data-r="daily">Daily</button>
+        <button data-r="weekdays">Weekdays</button>
+        <button data-r="weekly">Weekly</button>
+        <button data-r="monthly">Monthly</button>
+      </div>
     </div>
     <div class="field">
       <label>Energy it needs</label>
@@ -426,6 +496,16 @@
         <button data-e="med"><span class="e-ico"><i></i><i></i></span>Medium</button>
         <button data-e="high"><span class="e-ico"><i></i><i></i><i></i></span>High</button>
       </div>
+    </div>
+    <div class="field">
+      <label for="fProject">Project <span style="text-transform:none;letter-spacing:0;color:var(--faint)">· optional</span></label>
+      <input class="inp" id="fProject" type="text" list="projectList" placeholder="e.g. Home, Work, Side project" autocomplete="off" />
+      <datalist id="projectList"></datalist>
+    </div>
+    <div class="field">
+      <label>Tags <span style="text-transform:none;letter-spacing:0;color:var(--faint)">· optional</span></label>
+      <div class="tag-edit" id="fTags"></div>
+      <input class="inp" id="fTagInput" type="text" placeholder="Type a tag, press Enter" autocomplete="off" />
     </div>
     <div class="field">
       <label>Break into steps <span style="text-transform:none;letter-spacing:0;color:var(--faint)">· optional</span></label>
@@ -465,6 +545,40 @@
     <div class="sheet-actions">
       <button class="btn btn-ghost" id="notifClose" style="flex:1">Done</button>
     </div>
+  </div>
+</div>
+
+<!-- Pick-one overlay -->
+<div class="focus-overlay" id="pickOverlay">
+  <div class="focus-eyebrow">Your one thing</div>
+  <div class="focus-step" id="pickStep">—</div>
+  <div class="focus-ttl" id="pickTtl"></div>
+  <div class="pick-meta" id="pickMeta"></div>
+  <div class="pick-actions">
+    <button class="fc-main" id="pickFocus">▶ Start focus</button>
+    <button class="focus-done" id="pickDone" style="margin-top:0">✓ Done</button>
+  </div>
+  <div class="pick-sub">
+    <button id="pickDefer">Defer</button>
+    <button id="pickAnother">Pick another</button>
+    <button id="pickClose">Close</button>
+  </div>
+</div>
+
+<!-- Per-task action sheet -->
+<div class="scrim" id="taskScrim">
+  <div class="sheet" role="dialog" aria-modal="true" aria-label="Task actions">
+    <div class="sheet-grip"></div>
+    <h2 id="taskSheetTitle">Task</h2>
+    <label style="display:block;font-family:var(--font-m);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-bottom:9px">Defer to</label>
+    <div class="defer-row">
+      <button data-defer="tomorrow">Tomorrow</button>
+      <button data-defer="weekend">This weekend</button>
+      <button data-defer="nextweek">Next week</button>
+    </div>
+    <button class="btn btn-ghost" id="taskEdit" style="width:100%;margin-bottom:10px">Edit details</button>
+    <button class="btn btn-danger" id="taskDelete" style="width:100%">Delete task</button>
+    <div class="sheet-actions"><button class="btn btn-ghost" id="taskClose" style="flex:1">Cancel</button></div>
   </div>
 </div>
 
@@ -521,6 +635,8 @@ let view = "now";
 let editingId = null;       // task id being edited, or null for new
 let editSubs = [];          // working copy of subtasks in editor
 let editEnergy = null;
+let editTags = [];          // working copy of tags in editor
+let editRecur = "";         // working recurrence preset
 let lastCompleted = null;   // for undo
 let saveTimer = null, pendingSave = false, saveWarned = false;
 
@@ -616,6 +732,9 @@ function cardHTML(t){
   const subs = t.subtasks||[];
   const doneN = subs.filter(s=>s.done).length;
   const energy = t.energy ? `<span class="enpill" data-e="${t.energy}" aria-label="${t.energy} energy"><span class="dot"></span>${ENLABEL[t.energy]}</span>` : "";
+  const recur = t.recur ? `<span class="recpill" title="Repeats ${RECUR_LABEL[t.recur]}"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14M7 22l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>${RECUR_LABEL[t.recur]}</span>` : "";
+  const project = t.project ? `<span class="projpill" data-act="filterProject" data-val="${esc(t.project)}"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h6l2 2h10v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/></svg>${esc(t.project)}</span>` : "";
+  const tags = (t.tags||[]).map(tg=>`<span class="tagchip" data-act="filterTag" data-val="${esc(tg)}">#${esc(tg)}</span>`).join("");
   const datechip = t.due
     ? `<span class="datechip" data-tier="${di.tier}" style="color:${di.color}"><span class="dot"></span>${esc(di.label)}</span>`
     : "";
@@ -626,6 +745,8 @@ function cardHTML(t){
     ? `<div class="ifthen"><span class="k">cue</span><span>${esc(t.ifthen)}</span></div>` : "";
   const prog = subs.length
     ? `<div class="prog"><div class="prog-track"><div class="prog-fill" style="width:${Math.round(doneN/subs.length*100)}%"></div></div><span class="prog-lbl">${doneN}/${subs.length}</span></div>` : "";
+  const chips = datechip+energy+recur+project+tags;
+  const metaRow = chips ? `<div class="meta-row">${chips}</div>` : "";
   return `<div class="card" data-id="${t.id}">
     <div class="accent-edge" style="background:${di.color}"></div>
     <div class="card-top">
@@ -636,11 +757,10 @@ function cardHTML(t){
     </div>
     ${ifthen}
     ${prog}
-    <div class="meta-row">
-      ${datechip}${energy}
-      <span class="spacer"></span>
+    ${metaRow}
+    <div class="card-actions">
       <button class="mini focus-btn" data-act="focus">▶ Focus</button>
-      <button class="mini" data-act="edit">Edit</button>
+      <button class="mini" data-act="menu" aria-label="More actions">⋯</button>
     </div>
   </div>`;
 }
@@ -658,7 +778,7 @@ function renderNow(){
   }
   const CAP = 6;
   const shown = tasks.slice(0,CAP), rest = tasks.slice(CAP);
-  let html = head + `<div class="stack">${shown.map(cardHTML).join("")}</div>`;
+  let html = head + `<button class="pick-btn" data-act="pick">✦ Pick one for me</button>` + `<div class="stack">${shown.map(cardHTML).join("")}</div>`;
   if(rest.length){
     html += `<div style="text-align:center;margin-top:16px"><button class="chip-btn" data-act="seeall">${rest.length} more waiting — see all</button></div>`;
   }
@@ -695,14 +815,31 @@ function renderInbox(){
   main.innerHTML = head + `<div class="stack">${items}</div>`;
 }
 
+function allFilterHTML(){
+  const projects = Array.from(new Set(state.tasks.map(t=>t.project).filter(Boolean))).sort();
+  const tags = Array.from(new Set(state.tasks.flatMap(t=>t.tags||[]))).sort();
+  if(!projects.length && !tags.length) return "";
+  const af = allFilter;
+  let chips = `<button class="chip-btn ${!af?'on':''}" data-act="allFilter">All</button>`;
+  chips += projects.map(p=>`<button class="chip-btn proj ${af&&af.type==='project'&&af.value===p?'on':''}" data-act="allFilter" data-ftype="project" data-val="${esc(p)}">▸ ${esc(p)}</button>`).join("");
+  chips += tags.map(tg=>`<button class="chip-btn ${af&&af.type==='tag'&&af.value===tg?'on':''}" data-act="allFilter" data-ftype="tag" data-val="${esc(tg)}">#${esc(tg)}</button>`).join("");
+  return `<div class="filter-row">${chips}</div>`;
+}
+function matchesFilter(t){
+  if(!allFilter) return true;
+  if(allFilter.type==="project") return t.project===allFilter.value;
+  if(allFilter.type==="tag") return (t.tags||[]).includes(allFilter.value);
+  return true;
+}
 function renderAll(){
   const main = $("#main");
-  const open = state.tasks.filter(t=>!t.done);
-  const done = state.tasks.filter(t=>t.done).sort((a,b)=>(b.completedAt||0)-(a.completedAt||0));
+  let open = state.tasks.filter(t=>!t.done);
+  let done = state.tasks.filter(t=>t.done).sort((a,b)=>(b.completedAt||0)-(a.completedAt||0));
+  open = open.filter(matchesFilter); done = done.filter(matchesFilter);
   open.sort((a,b)=>{ const da=dueInfo(a.due),db=dueInfo(b.due); return da.order-db.order || ((a.createdAt||0)-(b.createdAt||0)); });
-  const head = `<div class="view-head"><div class="view-title">All tasks</div><div class="view-sub">${open.length} open · ${done.length} done</div></div>`;
+  const head = `<div class="view-head"><div class="view-title">All tasks</div><div class="view-sub">${open.length} open · ${done.length} done</div></div>` + allFilterHTML();
   if(!open.length && !done.length){
-    main.innerHTML = head + emptyHTML("Nothing here yet","Everything starts as a captured thought. Type one in the box up top, then give it a first step.");
+    main.innerHTML = head + emptyHTML(allFilter?"Nothing here":"Nothing here yet", allFilter?"No tasks match this filter. Tap “All” to clear it.":"Everything starts as a captured thought. Type one in the box up top, then give it a first step.");
     return;
   }
   let html = head;
@@ -732,26 +869,68 @@ function fixChips(root){
   $$(".datechip", root).forEach(c=>{ c.style.background = TIER_BG[c.dataset.tier] || "rgba(107,111,125,.12)"; });
 }
 
+/* ============ date helpers + recurrence ============ */
+function addDays(dateStr, n){ const d=parseYMD(dateStr); d.setDate(d.getDate()+n); return ymd(d); }
+function tomorrowStr(){ return addDays(todayStr(),1); }
+function weekendStr(){ const d=new Date(); const dow=d.getDay(); if(dow===0||dow===6) return ymd(d); d.setDate(d.getDate()+(6-dow)); return ymd(d); }
+function nextWeekStr(){ return addDays(todayStr(),7); }
+function addMonthStr(dateStr){ const d=parseYMD(dateStr); d.setMonth(d.getMonth()+1); return ymd(d); }
+const RECUR_LABEL = {daily:"Daily", weekdays:"Weekdays", weekly:"Weekly", monthly:"Monthly"};
+function nextRecurDate(task){
+  const base = (task.due && task.due>todayStr()) ? task.due : todayStr();
+  switch(task.recur){
+    case "daily": return addDays(base,1);
+    case "weekdays": { let d=addDays(base,1); while([0,6].includes(parseYMD(d).getDay())) d=addDays(d,1); return d; }
+    case "weekly": return addDays(base,7);
+    case "monthly": return addMonthStr(base);
+    default: return null;
+  }
+}
+function quickDate(kind){
+  return kind==="today"?todayStr() : kind==="tomorrow"?tomorrowStr() : kind==="weekend"?weekendStr() : kind==="nextweek"?nextWeekStr() : "";
+}
+// transient filter for the All view
+let allFilter = null;   // {type:'project'|'tag', value}
+let pickIndex = 0;      // cursor for "pick one for me"
+
+
 /* ============ calendar ============ */
 const TIER_VAR = {over:"var(--over)",today:"var(--today)",soon:"var(--soon)",upcoming:"var(--upcoming)",later:"var(--later)",none:"var(--faint)"};
 const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 const DOW = ["S","M","T","W","T","F","S"];
-let calY, calM, calSel = null;   // displayed year/month (0-11), selected date string
+let calY, calM, calSel = null, calMode = "month";   // displayed year/month (0-11), selected date, view mode
 function ensureCalInit(){
   if(calY===undefined){ const n=new Date(); calY=n.getFullYear(); calM=n.getMonth(); calSel=todayStr(); }
 }
 function calShift(delta){
+  if(calMode==="week"){ calSel = addDays(calSel||todayStr(), 7*delta); renderCalendar(); return; }
   calM += delta;
   if(calM<0){ calM=11; calY--; } else if(calM>11){ calM=0; calY++; }
   calSel = null;            // clear selection when leaving the month
   renderCalendar();
 }
 function calGoToday(){ const n=new Date(); calY=n.getFullYear(); calM=n.getMonth(); calSel=todayStr(); renderCalendar(); }
+function calHeader(titleHTML){
+  return `<div class="cal-head">
+      <div class="cal-month">${titleHTML}</div>
+      <div class="cal-nav">
+        <button class="cal-today-btn" data-act="calToday">Today</button>
+        <button class="cal-arrow" data-act="calPrev" aria-label="Previous"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+        <button class="cal-arrow" data-act="calNext" aria-label="Next"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+      </div>
+    </div>
+    <div class="cal-modes">
+      <button class="cal-mode ${calMode==='month'?'on':''}" data-act="calMode" data-mode="month">Month</button>
+      <button class="cal-mode ${calMode==='week'?'on':''}" data-act="calMode" data-mode="week">Week</button>
+    </div>`;
+}
+function weekDays(anchor){ const dow=parseYMD(anchor).getDay(); const start=addDays(anchor,-dow); return Array.from({length:7},(_,i)=>addDays(start,i)); }
 
 function tasksDueOn(dateStr){ return state.tasks.filter(t=>t.due===dateStr); }
 
 function renderCalendar(){
   ensureCalInit();
+  if(calMode==="week"){ renderWeek(); return; }
   const main = $("#main");
   const today = todayStr();
   const first = new Date(calY, calM, 1).getDay();           // 0=Sun
@@ -778,17 +957,32 @@ function renderCalendar(){
       <span class="cal-dots">${dots}</span>
     </div>`;
   }
-
-  const head = `<div class="cal-head">
-      <div class="cal-month">${MONTHS[calM]}<span class="yr">${calY}</span></div>
-      <div class="cal-nav">
-        <button class="cal-today-btn" data-act="calToday">Today</button>
-        <button class="cal-arrow" data-act="calPrev" aria-label="Previous month"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button>
-        <button class="cal-arrow" data-act="calNext" aria-label="Next month"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
-      </div>
-    </div>`;
   const dow = `<div class="cal-grid">${DOW.map(x=>`<div class="cal-dow">${x}</div>`).join("")}</div>`;
-  main.innerHTML = head + dow + `<div class="cal-grid">${cells}</div>` + renderCalDetail();
+  main.innerHTML = calHeader(`${MONTHS[calM]}<span class="yr">${calY}</span>`) + dow + `<div class="cal-grid">${cells}</div>` + renderCalDetail();
+  fixChips(main);
+}
+
+function renderWeek(){
+  const main = $("#main"); const today = todayStr();
+  const days = weekDays(calSel || today);
+  const title = parseYMD(days[0]).toLocaleDateString(undefined,{month:"short",day:"numeric"}) + " – " +
+                parseYMD(days[6]).toLocaleDateString(undefined,{month:"short",day:"numeric"});
+  let body = "";
+  days.forEach(ds=>{
+    const dt = parseYMD(ds);
+    const open = tasksDueOn(ds).filter(t=>!t.done).sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
+    const done = tasksDueOn(ds).filter(t=>t.done);
+    const isToday = ds===today, isPast = ds<today;
+    const dlabel = dt.toLocaleDateString(undefined,{weekday:"short"})+" "+dt.getDate();
+    body += `<div class="week-day ${isToday?'today':''} ${isPast?'past':''}">
+      <div class="week-day-head"><span class="wd-name">${dlabel}${isToday?' · Today':''}</span>
+        <button class="cal-add sm" data-act="calAdd" data-date="${ds}">+ Add</button></div>`;
+    if(open.length) body += `<div class="stack" style="margin-top:9px">${open.map(cardHTML).join("")}</div>`;
+    if(done.length) body += done.map(t=>`<div class="cal-done-row" style="margin-top:7px"><span class="ck"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span><span class="t">${esc(t.title)}</span></div>`).join("");
+    if(!open.length && !done.length) body += `<div class="week-empty">Nothing due</div>`;
+    body += `</div>`;
+  });
+  main.innerHTML = calHeader(title) + `<div class="week-list">${body}</div>`;
   fixChips(main);
 }
 
@@ -858,10 +1052,19 @@ function completeTask(id, originEl){
   const t = state.tasks.find(x=>x.id===id); if(!t||t.done) return;
   if(originEl){ const r=originEl.getBoundingClientRect(); burst(r.left+r.width/2, r.top+r.height/2); }
   ding();
-  t.done=true; t.completedAt=Date.now();
   const k=todayStr(); state.history[k]=(state.history[k]||0)+1;
-  lastCompleted=id; save();
   const card = originEl ? originEl.closest(".card") : null;
+  if(t.recur){
+    const next = nextRecurDate(t);
+    t.due = next;
+    (t.subtasks||[]).forEach(s=>s.done=false);
+    lastCompleted = null; save();
+    if(card){ card.classList.add("leaving"); setTimeout(render, 420); } else render();
+    showToast("Done ✓ — next "+(next?dueInfo(next).label.toLowerCase():RECUR_LABEL[t.recur].toLowerCase()), false);
+    return;
+  }
+  t.done=true; t.completedAt=Date.now();
+  lastCompleted=id; save();
   if(card){ card.classList.add("leaving"); setTimeout(()=>{render();}, 420); }
   else render();
   showToast("Done — nice.", true);
@@ -892,12 +1095,32 @@ function openEditor(id, prefillTitle, prefillDue){
   $("#fIf").value = t ? (t.ifthen||"") : "";
   $("#fDue").value = t ? (t.due||"") : (prefillDue||"");
   editEnergy = t ? (t.energy||null) : null;
+  editRecur = t ? (t.recur||"") : "";
+  editTags = t ? ((t.tags||[]).slice()) : [];
+  $("#fProject").value = t ? (t.project||"") : "";
   editSubs = t ? (t.subtasks? t.subtasks.map(s=>({...s})):[]) : [];
   $$("#fEnergy button").forEach(b=>b.classList.toggle("on", b.dataset.e===editEnergy));
+  $$("#fRecur button").forEach(b=>b.classList.toggle("on", (b.dataset.r||"")===editRecur));
+  // project autocomplete from existing projects
+  const projects = Array.from(new Set(state.tasks.map(x=>x.project).filter(Boolean))).sort();
+  $("#projectList").innerHTML = projects.map(p=>`<option value="${esc(p)}"></option>`).join("");
+  renderTags();
   renderSubs();
   $("#editDelete").style.display = id ? "block" : "none";
   $("#editScrim").classList.add("open");
   setTimeout(()=>$("#fTitle").focus(),80);
+}
+function renderTags(){
+  $("#fTags").innerHTML = editTags.length
+    ? editTags.map((tg,i)=>`<span class="tagchip on">#${esc(tg)}<button class="tx" data-tag-del="${i}" aria-label="Remove tag">✕</button></span>`).join("")
+    : "";
+  $("#fTags").style.display = editTags.length ? "flex" : "none";
+}
+function addTag(){
+  const i=$("#fTagInput"); let v=i.value.trim().replace(/^#/,"").toLowerCase();
+  if(!v) return;
+  if(!editTags.includes(v)) editTags.push(v);
+  i.value=""; renderTags();
 }
 function closeEditor(){ $("#editScrim").classList.remove("open"); editingId=null; }
 function renderSubs(){
@@ -912,7 +1135,12 @@ function renderSubs(){
 function saveEditor(){
   const title=$("#fTitle").value.trim();
   if(!title){ $("#fTitle").focus(); $("#fTitle").style.borderColor="var(--over)"; return; }
-  const data={ title, step:$("#fStep").value.trim(), ifthen:$("#fIf").value.trim(), due:$("#fDue").value||null, energy:editEnergy, subtasks:editSubs };
+  // fold any half-typed tag in
+  const pend=$("#fTagInput").value.trim().replace(/^#/,"").toLowerCase();
+  if(pend && !editTags.includes(pend)) editTags.push(pend);
+  const proj=$("#fProject").value.trim();
+  const data={ title, step:$("#fStep").value.trim(), ifthen:$("#fIf").value.trim(), due:$("#fDue").value||null,
+    energy:editEnergy, recur:editRecur||null, project:proj||null, tags:editTags.slice(), subtasks:editSubs };
   if(editingId){ Object.assign(state.tasks.find(x=>x.id===editingId), data); }
   else { state.tasks.push({ id:uid(), createdAt:Date.now(), done:false, completedAt:null, ...data }); }
   save(); closeEditor();
@@ -977,7 +1205,52 @@ function startFocus(){
 function stopFocus(){ focusRunning=false; $("#focusToggle").textContent= (focusLeft<focusTotal && focusLeft>0)?"Resume":"Start"; clearInterval(focusInt); }
 function closeFocus(){ stopFocus(); $("#focusOverlay").classList.remove("open"); focusTask=null; }
 
-/* ============ events ============ */
+/* ============ pick one for me ============ */
+let pickTaskId = null;
+function metaChips(t){
+  const di=dueInfo(t.due);
+  let h="";
+  if(t.due) h+=`<span class="datechip" data-tier="${di.tier}" style="color:${di.color};background:${TIER_BG[di.tier]}"><span class="dot"></span>${esc(di.label)}</span>`;
+  if(t.energy) h+=`<span class="enpill" data-e="${t.energy}"><span class="dot"></span>${ENLABEL[t.energy]}</span>`;
+  if(t.recur) h+=`<span class="recpill">${RECUR_LABEL[t.recur]}</span>`;
+  return h;
+}
+function openPick(){
+  const cands = activeTasks();
+  if(!cands.length){ showToast("Nothing to pick yet — capture something first."); return; }
+  pickIndex = 0;
+  renderPick();
+  $("#pickOverlay").classList.add("open");
+}
+function renderPick(){
+  const cands = activeTasks();
+  if(!cands.length){ closePick(); render(); return; }
+  const t = cands[pickIndex % cands.length];
+  pickTaskId = t.id;
+  $("#pickStep").textContent = (t.step && t.step.trim()) ? t.step : t.title;
+  $("#pickTtl").textContent = (t.step && t.step.trim()) ? t.title : "";
+  $("#pickMeta").innerHTML = metaChips(t);
+  $("#pickAnother").style.display = cands.length>1 ? "inline-block" : "none";
+}
+function closePick(){ $("#pickOverlay").classList.remove("open"); }
+
+/* ============ task action sheet + defer ============ */
+let taskSheetId = null;
+function openTaskSheet(id){
+  const t=state.tasks.find(x=>x.id===id); if(!t) return;
+  taskSheetId=id;
+  $("#taskSheetTitle").textContent = t.title;
+  $("#taskScrim").classList.add("open");
+}
+function closeTaskSheet(){ $("#taskScrim").classList.remove("open"); taskSheetId=null; }
+function deferTask(id, kind){
+  const t=state.tasks.find(x=>x.id===id); if(!t) return;
+  const d=quickDate(kind); if(!d) return;
+  t.due=d; save(); render();
+  showToast("Deferred to "+dueInfo(d).label.toLowerCase()+".");
+}
+
+
 function onMainClick(e){
   const actEl = e.target.closest("[data-act]"); if(!actEl) return;
   const act = actEl.dataset.act;
@@ -985,7 +1258,15 @@ function onMainClick(e){
   const id = card ? card.dataset.id : null;
   if(act==="energy"){ const v=actEl.dataset.e; state.settings.energyFilter = v||null; save(); renderNow(); return; }
   if(act==="seeall"){ setView("all"); return; }
+  if(act==="pick"){ openPick(); return; }
+  if(act==="menu"){ openTaskSheet(id); return; }
+  if(act==="filterProject"){ allFilter={type:"project",value:actEl.dataset.val}; setView("all"); return; }
+  if(act==="filterTag"){ allFilter={type:"tag",value:actEl.dataset.val}; setView("all"); return; }
+  if(act==="allFilter"){ const ty=actEl.dataset.ftype, va=actEl.dataset.val;
+    allFilter = (!ty || (allFilter && allFilter.type===ty && allFilter.value===va)) ? null : {type:ty,value:va};
+    renderAll(); return; }
   // calendar
+  if(act==="calMode"){ calMode = actEl.dataset.mode; calGoToday(); return; }
   if(act==="calPrev"){ calShift(-1); return; }
   if(act==="calNext"){ calShift(1); return; }
   if(act==="calToday"){ calGoToday(); return; }
@@ -997,7 +1278,7 @@ function onMainClick(e){
   if(act==="focus"){ openFocus(id); return; }
   // inbox
   if(act==="makeTask"){ const it=state.inbox.find(x=>x.id===id); if(it){ removeInbox(id); openEditor(null, it.text); } return; }
-  if(act==="keep"){ const it=state.inbox.find(x=>x.id===id); if(it){ state.tasks.push({id:uid(),title:it.text,step:"",ifthen:"",due:null,energy:null,subtasks:[],done:false,completedAt:null,createdAt:Date.now()}); removeInbox(id); save(); renderInbox(); renderBadges(); showToast("Added to your tasks."); } return; }
+  if(act==="keep"){ const it=state.inbox.find(x=>x.id===id); if(it){ state.tasks.push({id:uid(),title:it.text,step:"",ifthen:"",due:null,energy:null,recur:null,project:null,tags:[],subtasks:[],done:false,completedAt:null,createdAt:Date.now()}); removeInbox(id); save(); renderInbox(); renderBadges(); showToast("Added to your tasks."); } return; }
   if(act==="trash"){ removeInbox(id); save(); renderInbox(); renderBadges(); return; }
 }
 function removeInbox(id){ state.inbox = state.inbox.filter(x=>x.id!==id); }
@@ -1027,11 +1308,27 @@ function bind(){
     if(tg){ const i=+tg.dataset.subToggle; editSubs[i].done=!editSubs[i].done; renderSubs(); }
     if(dl){ editSubs.splice(+dl.dataset.subDel,1); renderSubs(); }
   });
+  $$("#fRecur button").forEach(b=> b.addEventListener("click",()=>{ editRecur = b.dataset.r||""; $$("#fRecur button").forEach(x=>x.classList.toggle("on",(x.dataset.r||"")===editRecur)); }));
+  $("#fQuick").addEventListener("click",e=>{ const b=e.target.closest("[data-quick]"); if(!b) return; const k=b.dataset.quick; $("#fDue").value = k==="clear"?"":quickDate(k); });
+  $("#fTagInput").addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventDefault(); addTag(); } });
+  $("#fTags").addEventListener("click",e=>{ const d=e.target.closest("[data-tag-del]"); if(d){ editTags.splice(+d.dataset.tagDel,1); renderTags(); } });
   // focus
   $("#focusToggle").addEventListener("click",()=> focusRunning? stopFocus(): startFocus());
   $("#focusExit").addEventListener("click", closeFocus);
   $("#focusComplete").addEventListener("click",()=>{ if(focusTask){ const id=focusTask.id; closeFocus(); completeTask(id, null); } });
   $$("#presets button").forEach(b=> b.addEventListener("click",()=>setFocusMinutes(+b.dataset.min)));
+  // pick one for me
+  $("#pickFocus").addEventListener("click",()=>{ const id=pickTaskId; closePick(); openFocus(id); });
+  $("#pickDone").addEventListener("click",()=>{ completeTask(pickTaskId, null); if(activeTasks().length) renderPick(); else closePick(); });
+  $("#pickDefer").addEventListener("click",()=>{ const id=pickTaskId; closePick(); openTaskSheet(id); });
+  $("#pickAnother").addEventListener("click",()=>{ pickIndex++; renderPick(); });
+  $("#pickClose").addEventListener("click", closePick);
+  // task action sheet
+  $("#taskScrim").addEventListener("click", e=>{ if(e.target.id==="taskScrim") closeTaskSheet(); });
+  $("#taskClose").addEventListener("click", closeTaskSheet);
+  $("#taskScrim").querySelector(".defer-row").addEventListener("click", e=>{ const b=e.target.closest("[data-defer]"); if(b && taskSheetId){ const id=taskSheetId; closeTaskSheet(); deferTask(id, b.dataset.defer); } });
+  $("#taskEdit").addEventListener("click",()=>{ const id=taskSheetId; closeTaskSheet(); openEditor(id); });
+  $("#taskDelete").addEventListener("click",()=>{ if(taskSheetId){ state.tasks=state.tasks.filter(x=>x.id!==taskSheetId); save(); closeTaskSheet(); render(); showToast("Task deleted."); } });
   // toast undo
   $("#toastUndo").addEventListener("click",()=>{ if(lastCompleted){ uncompleteTask(lastCompleted); lastCompleted=null; $("#toast").classList.remove("show"); } });
   // wins -> toggle sound
@@ -1062,7 +1359,7 @@ function bind(){
     else renderNotifSheet();
   });
   // esc
-  document.addEventListener("keydown",e=>{ if(e.key==="Escape"){ if($("#focusOverlay").classList.contains("open")) closeFocus(); else if($("#editScrim").classList.contains("open")) closeEditor(); else if($("#notifScrim").classList.contains("open")) closeNotif(); } });
+  document.addEventListener("keydown",e=>{ if(e.key==="Escape"){ if($("#pickOverlay").classList.contains("open")) closePick(); else if($("#taskScrim").classList.contains("open")) closeTaskSheet(); else if($("#focusOverlay").classList.contains("open")) closeFocus(); else if($("#editScrim").classList.contains("open")) closeEditor(); else if($("#notifScrim").classList.contains("open")) closeNotif(); } });
   // persist immediately before the page is torn down or backgrounded (fixes lost-recent-change)
   document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="hidden") flushSave(); });
   window.addEventListener("pagehide", flushSave);
@@ -1179,11 +1476,14 @@ function closeNotif(){ $("#notifScrim").classList.remove("open"); }
 
 function seedIfEmpty(){
   if(state.tasks.length || state.inbox.length || Object.keys(state.history).length) return;
-  const t=todayStr(), d=new Date(); const plus=(n)=>{const x=new Date();x.setDate(x.getDate()+n);return ymd(x);};
+  const plus=(n)=>{const x=new Date();x.setDate(x.getDate()+n);return ymd(x);};
+  const base={recur:null,project:null,tags:[],subtasks:[],done:false,completedAt:null};
   state.tasks=[
-    {id:uid(),title:"Reply to the landlord about the lease",step:"Open the email and read their last message",ifthen:"If I sit down with coffee, then I'll open it before anything else",due:plus(1),energy:"low",subtasks:[],done:false,completedAt:null,createdAt:Date.now()-5000},
-    {id:uid(),title:"Draft the project proposal",step:"Open a blank doc and type just the title",ifthen:"",due:plus(4),energy:"high",subtasks:[{id:uid(),title:"Outline 3 sections",done:false},{id:uid(),title:"Write the intro",done:false},{id:uid(),title:"Add a rough budget",done:false}],done:false,completedAt:null,createdAt:Date.now()-4000},
-    {id:uid(),title:"Book the dentist",step:"Find the number in my contacts",ifthen:"",due:plus(-1),energy:"low",subtasks:[],done:false,completedAt:null,createdAt:Date.now()-3000},
+    {id:uid(),title:"Reply to the landlord about the lease",step:"Open the email and read their last message",ifthen:"If I sit down with coffee, then I'll open it before anything else",due:plus(1),energy:"low",recur:null,project:"Home",tags:["admin"],subtasks:[],done:false,completedAt:null,createdAt:Date.now()-5000},
+    {id:uid(),title:"Draft the project proposal",step:"Open a blank doc and type just the title",ifthen:"",due:plus(4),energy:"high",recur:null,project:"Work",tags:["writing","deep-work"],subtasks:[{id:uid(),title:"Outline 3 sections",done:false},{id:uid(),title:"Write the intro",done:false},{id:uid(),title:"Add a rough budget",done:false}],done:false,completedAt:null,createdAt:Date.now()-4000},
+    {id:uid(),title:"Book the dentist",step:"Find the number in my contacts",ifthen:"",due:plus(-1),energy:"low",recur:null,project:"Home",tags:["health"],subtasks:[],done:false,completedAt:null,createdAt:Date.now()-3000},
+    {id:uid(),title:"Take meds",step:"",ifthen:"",due:todayStr(),energy:"low",recur:"daily",project:null,tags:[],subtasks:[],done:false,completedAt:null,createdAt:Date.now()-2500},
+    {id:uid(),title:"Put the bins out",step:"",ifthen:"",due:weekendStr(),energy:"low",recur:"weekly",project:"Home",tags:[],subtasks:[],done:false,completedAt:null,createdAt:Date.now()-2200},
   ];
   state.inbox=[{id:uid(),text:"Look into that podcast someone mentioned",createdAt:Date.now()-2000}];
   save();
